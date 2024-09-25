@@ -2,26 +2,35 @@
 "use client";
 
 import { GraphQLClient } from "graphql-request";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ADD_USER } from "../lib/queryAndMutation";
-
-const client = new GraphQLClient(
-  `${process.env.NEXT_PUBLIC_API_URL || window.location.origin}/api/graphql`
-);
 
 export default function UserForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [client, setClient] = useState<GraphQLClient | null>(null);
+
+  // Initialize the GraphQL client only on the client side
+  useEffect(() => {
+    const apiURL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== "undefined" ? `${window.location.origin}/api/graphql` : "");
+
+    if (apiURL) {
+      const gqlClient = new GraphQLClient(apiURL);
+      setClient(gqlClient);
+    }
+  }, []);
 
   // Add a new user
   const addUser = async () => {
-    const variables = { name, email };
-    await client.request(ADD_USER, variables);
-    setName("");
-    setEmail("");
-    // Refresh the user list
-    // const data: any = await client.request(GET_ALL_USERS);
-    // setUsers(data.getAllUsers);
+    if (client) {
+      const variables = { name, email };
+      await client.request(ADD_USER, variables);
+      setName("");
+      setEmail("");
+      // Refresh the user list or other post-request actions here
+      // const data: any = await client.request(GET_ALL_USERS);
+      // setUsers(data.getAllUsers);
+    }
   };
 
   const addUserComp = (

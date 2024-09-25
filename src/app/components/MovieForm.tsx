@@ -2,21 +2,29 @@
 "use client";
 
 import { GraphQLClient } from "graphql-request";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ADD_MOVIE } from "../lib/queryAndMutation";
 
-const client = new GraphQLClient(
-  `${process.env.NEXT_PUBLIC_API_URL || window.location.origin}/api/graphql`
-);
-
 export default function MovieForm() {
-
+  const [client, setClient] = useState<GraphQLClient | null>(null);
   const [movieTitle, setMovieTitle] = useState("");
   const [movieDescription, setMovieDescription] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
 
+  // Initialize the GraphQL client only on the client side
+  useEffect(() => {
+    const apiURL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== "undefined" ? `${window.location.origin}/api/graphql` : "");
+    
+    if (apiURL) {
+      const gqlClient = new GraphQLClient(apiURL);
+      setClient(gqlClient);
+    }
+  }, []);
+
   // Add a new movie
   const addMovie = async () => {
+    if (!client) return;
+
     const variables = {
       title: movieTitle,
       description: movieDescription,
@@ -26,9 +34,6 @@ export default function MovieForm() {
     setMovieTitle("");
     setMovieDescription("");
     setVideoUrl("");
-    // Refresh the movie list
-    // const data: any = await client.request(GET_ALL_MOVIES);
-    // setMovies(data.getAllMovies);
   };
 
   const addMovieComp = (

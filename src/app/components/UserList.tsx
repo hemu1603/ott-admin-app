@@ -5,21 +5,31 @@ import { GraphQLClient } from "graphql-request";
 import { useState, useEffect } from "react";
 import { GET_ALL_USERS } from "../lib/queryAndMutation";
 
-const client = new GraphQLClient(
-  `${process.env.NEXT_PUBLIC_API_URL || window.location.origin}/api/graphql`
-);
-
 export default function UserList() {
   const [users, setUsers] = useState<
     { _id: string; name: string; email: string }[]
   >([]);
 
-  // Fetch all users
+  const [client, setClient] = useState<GraphQLClient | null>(null);
+
   useEffect(() => {
-    client.request(GET_ALL_USERS).then((data: any) => {
-      setUsers(data.getAllUsers);
-    });
+    // Initialize the GraphQL client only on the client side
+    const apiURL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? `${window.location.origin}/api/graphql` : '');
+    
+    if (apiURL) {
+      const gqlClient = new GraphQLClient(apiURL);
+      setClient(gqlClient);
+    }
   }, []);
+
+  useEffect(() => {
+    if (client) {
+      // Fetch all users
+      client.request(GET_ALL_USERS).then((data: any) => {
+        setUsers(data.getAllUsers);
+      });
+    }
+  }, [client]);
 
   const allUsers = (
     <div className="flex flex-col p-4 w-full">

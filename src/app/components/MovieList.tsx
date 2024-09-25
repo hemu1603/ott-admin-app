@@ -6,21 +6,30 @@ import { useState, useEffect } from "react";
 import { GET_ALL_MOVIES } from "../lib/queryAndMutation";
 import MovieItem from "./MovieItem";
 
-const client = new GraphQLClient(
-  `${process.env.NEXT_PUBLIC_API_URL || window.location.origin}/api/graphql`
-);
-
 export default function MovieList() {
   const [movies, setMovies] = useState<
     { _id: string; title: string; description: string; videoUrl: string }[]
   >([]);
+  const [client, setClient] = useState<GraphQLClient | null>(null);
 
-  // Fetch all movies
   useEffect(() => {
-    client.request(GET_ALL_MOVIES).then((data: any) => {
-      setMovies(data.getAllMovies);
-    });
+    // Initialize the GraphQL client only on the client side
+    const apiURL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== "undefined" ? `${window.location.origin}/api/graphql` : "");
+
+    if (apiURL) {
+      const gqlClient = new GraphQLClient(apiURL);
+      setClient(gqlClient);
+    }
   }, []);
+
+  useEffect(() => {
+    if (client) {
+      // Fetch all movies
+      client.request(GET_ALL_MOVIES).then((data: any) => {
+        setMovies(data.getAllMovies);
+      });
+    }
+  }, [client]);
 
   const allMovies = (
     <div>
