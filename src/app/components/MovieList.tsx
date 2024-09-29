@@ -8,7 +8,7 @@ import MovieItem from "./MovieItem";
 
 export default function MovieList() {
   const [movies, setMovies] = useState<
-    { _id: string; title: string; description: string; videoUrl: string }[]
+    { _id: string; title: string; description: string; videoUrl: string; category: string }[]
   >([]);
   const [client, setClient] = useState<GraphQLClient | null>(null);
 
@@ -42,6 +42,7 @@ export default function MovieList() {
             title={movie.title}
             description={movie.description}
             videoUrl={movie.videoUrl}
+            category={movie.category}
           />
         ))}
       </ul>

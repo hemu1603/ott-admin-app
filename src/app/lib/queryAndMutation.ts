@@ -17,6 +17,9 @@ export const GET_ALL_MOVIES = gql`
       title
       description
       videoUrl
+      thumbnail
+      category
+      uploadedDate
     }
   }
 `;
@@ -32,12 +35,29 @@ export const ADD_USER = gql`
 `;
 
 export const ADD_MOVIE = gql`
-  mutation ($title: String!, $description: String!, $videoUrl: String!) {
-    addMovie(title: $title, description: $description, videoUrl: $videoUrl) {
+  mutation (
+    $title: String!
+    $description: String!
+    $videoUrl: String!
+    $thumbnail: String!
+    $category: String!
+    $uploadedDate: String!
+  ) {
+    addMovie(
+      title: $title
+      description: $description
+      videoUrl: $videoUrl
+      thumbnail: $thumbnail
+      category: $category
+      uploadedDate: $uploadedDate
+    ) {
       _id
       title
       description
       videoUrl
+      thumbnail
+      category
+      uploadedDate
     }
   }
 `;

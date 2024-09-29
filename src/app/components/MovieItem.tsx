@@ -5,9 +5,16 @@ interface MovieProps {
   title: string;
   description: string;
   videoUrl: string;
+  category: string;
 }
 
-const MovieItem: React.FC<MovieProps> = ({ _id, title, description, videoUrl }) => {
+const MovieItem: React.FC<MovieProps> = ({
+  _id,
+  title,
+  description,
+  videoUrl,
+  category,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleDescription = () => {
@@ -29,7 +36,14 @@ const MovieItem: React.FC<MovieProps> = ({ _id, title, description, videoUrl }) 
           title={title}
         />
       </div>
-      <h3 className="mt-4 p-5 text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+      <div className="mt-4">
+        <span className="mt-4 mx-4 p-2 border border-gray-200 rounded-lg w-[100%] text-indigo-800 font-bold">
+          {category}
+        </span>
+      </div>
+      <h3 className="mt-1 p-5 text-xl font-bold text-gray-900 dark:text-white">
+        {title}
+      </h3>
       <p className="mt-2 p-5 text-gray-700 dark:text-gray-300">
         {isExpanded ? description : shortDescription}
         {description.length > 100 && (

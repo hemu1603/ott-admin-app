@@ -10,6 +10,8 @@ export default function MovieForm() {
   const [movieTitle, setMovieTitle] = useState("");
   const [movieDescription, setMovieDescription] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
+  const [category, setCategory] = useState("");
 
   // Initialize the GraphQL client only on the client side
   useEffect(() => {
@@ -29,11 +31,16 @@ export default function MovieForm() {
       title: movieTitle,
       description: movieDescription,
       videoUrl,
+      thumbnail,
+      category,
+      uploadedDate: new Date().toLocaleString(),
     };
     await client.request(ADD_MOVIE, variables);
     setMovieTitle("");
     setMovieDescription("");
     setVideoUrl("");
+    setThumbnail("");
+    setCategory("");
   };
 
   const addMovieComp = (
@@ -56,10 +63,24 @@ export default function MovieForm() {
         />
         <input
           type="text"
+          placeholder="Category"
+          className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        />
+        <input
+          type="text"
           placeholder="Video URL"
           className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Thumbnail URL"
+          className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          value={thumbnail}
+          onChange={(e) => setThumbnail(e.target.value)}
         />
         <button
           onClick={addMovie}
