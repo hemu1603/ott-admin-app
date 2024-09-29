@@ -54,12 +54,7 @@ const rootValue = {
     const result = await db.collection("users").insertOne(newUser);
     return { _id: result.insertedId, ...newUser };
   },
-  getAllMovies: async () => {
-    const db = await connectToDatabase();
-    const movies = await db.collection("movies").find().toArray();
-    return movies;
-  },
-  getMoviesByCategory: async (category: any) => {
+  getAllMovies: async (category: any) => {
     const db = await connectToDatabase();
     const movies = await db.collection("movies").find({ category }).toArray();
     return movies;
