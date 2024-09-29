@@ -8,7 +8,7 @@ const schema = buildSchema(`
   type Query {
     hello: String
     getAllUsers: [User]
-    getAllMovies: [Movie]
+    getAllMovies(category: String): [Movie]
   }
 
   type User {
@@ -54,9 +54,10 @@ const rootValue = {
     const result = await db.collection("users").insertOne(newUser);
     return { _id: result.insertedId, ...newUser };
   },
-  getAllMovies: async (category: any) => {
+  getAllMovies: async ({ category }: { category?: string }) => {
     const db = await connectToDatabase();
-    const movies = await db.collection("movies").find(category).toArray();
+    const query = category ? { category: category } : {};
+    const movies = await db.collection("movies").find(query).toArray();
     return movies;
   },
   addMovie: async ({
@@ -90,12 +91,24 @@ const rootValue = {
 
 // Handle the GraphQL request
 export async function POST(req: NextRequest) {
-  const { query, variables } = await req.json();
-  const response = await graphql({
-    schema,
-    source: query,
-    rootValue,
-    variableValues: variables,
-  });
-  return NextResponse.json(response);
+  try {
+    const { query, variables } = await req.json();
+
+    const response = await graphql({
+      schema,
+      source: query,
+      rootValue,
+      variableValues: variables,
+    });
+
+    // Check for errors in the GraphQL response
+    if (response.errors) {
+      return NextResponse.json({ errors: response.errors }, { status: 400 });
+    }
+
+    return NextResponse.json(response);
+  } catch (error) {
+    console.error("Error processing GraphQL request:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }

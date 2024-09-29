@@ -11,8 +11,8 @@ export const GET_ALL_USERS = gql`
 `;
 
 export const GET_ALL_MOVIES = gql`
-  query {
-    getAllMovies {
+  query GetAllMovies($category: String) {
+    getAllMovies(category: $category) {
       _id
       title
       description

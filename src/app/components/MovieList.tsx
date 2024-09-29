@@ -24,12 +24,14 @@ export default function MovieList() {
 
   useEffect(() => {
     if (client) {
-      const variables = {};
+      const variables = { category: null };
       client.request(GET_ALL_MOVIES, variables).then((data: any) => {
         setMovies(data.getAllMovies);
+      }).catch((error) => {
+        console.error("Error fetching movies:", error);
       });
     }
-  }, [client]); 
+  }, [client]);
 
   const allMovies = (
     <div>
