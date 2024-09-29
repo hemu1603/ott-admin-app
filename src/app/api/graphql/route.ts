@@ -56,7 +56,7 @@ const rootValue = {
   },
   getAllMovies: async (category: any) => {
     const db = await connectToDatabase();
-    const movies = await db.collection("movies").find({ category }).toArray();
+    const movies = await db.collection("movies").find(category).toArray();
     return movies;
   },
   addMovie: async ({

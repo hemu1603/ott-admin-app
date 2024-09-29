@@ -24,12 +24,12 @@ export default function MovieList() {
 
   useEffect(() => {
     if (client) {
-      // Fetch all movies
-      client.request(GET_ALL_MOVIES).then((data: any) => {
+      const variables = {};
+      client.request(GET_ALL_MOVIES, variables).then((data: any) => {
         setMovies(data.getAllMovies);
       });
     }
-  }, [client]);
+  }, [client]); 
 
   const allMovies = (
     <div>
