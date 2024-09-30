@@ -24,6 +24,20 @@ export const GET_ALL_MOVIES = gql`
   }
 `;
 
+export const GET_SEARCHED_MOVIES = gql`
+  query GetSearchedMovies($searchQuery: String) {
+    getSearchedMovies(searchQuery: $searchQuery) {
+      _id
+      title
+      description
+      videoUrl
+      thumbnail
+      category
+      uploadedDate
+    }
+  }
+`;
+
 export const ADD_USER = gql`
   mutation ($name: String!, $email: String!) {
     addUser(name: $name, email: $email) {

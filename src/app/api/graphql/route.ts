@@ -9,6 +9,7 @@ const schema = buildSchema(`
     hello: String
     getAllUsers: [User]
     getAllMovies(category: String): [Movie]
+    getSearchedMovies(searchQuery: String): [Movie]
   }
 
   type User {
@@ -54,12 +55,27 @@ const rootValue = {
     const result = await db.collection("users").insertOne(newUser);
     return { _id: result.insertedId, ...newUser };
   },
-  getAllMovies: async ({ category }: { category?: string }) => {
+  getAllMovies: async (category: any) => {
     const db = await connectToDatabase();
-    const query = category ? { category: category } : {};
+    const movies = await db.collection("movies").find(category).toArray();
+    return movies;
+  },
+
+  getSearchedMovies: async (searchQuery: any) => {
+    const db = await connectToDatabase();
+    const query: any = {};
+    if (searchQuery) {
+      const regex = new RegExp(searchQuery, 'i');
+      query.$or = [
+        { title: { $regex: regex } },
+        { description: { $regex: regex } },
+        { category: { $regex: regex } },
+      ];
+    }
     const movies = await db.collection("movies").find(query).toArray();
     return movies;
   },
+
   addMovie: async ({
     title,
     description,
@@ -103,7 +119,7 @@ export async function POST(req: NextRequest) {
 
     // Check for errors in the GraphQL response
     if (response.errors) {
-      return NextResponse.json({ errors: response.errors }, { status: 400 });
+      return NextResponse.json({ errors: response.errors.map(err => err.message) }, { status: 400 });
     }
 
     return NextResponse.json(response);

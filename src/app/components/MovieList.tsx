@@ -12,8 +12,8 @@ export default function MovieList() {
   >([]);
   const [client, setClient] = useState<GraphQLClient | null>(null);
 
+  // Initialize the GraphQL client only on the client side
   useEffect(() => {
-    // Initialize the GraphQL client only on the client side
     const apiURL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== "undefined" ? `${window.location.origin}/api/graphql` : "");
 
     if (apiURL) {
@@ -22,13 +22,12 @@ export default function MovieList() {
     }
   }, []);
 
+  // Fetch all movies when the GraphQL client is ready
   useEffect(() => {
     if (client) {
-      const variables = { category: null };
+      const variables = {};
       client.request(GET_ALL_MOVIES, variables).then((data: any) => {
         setMovies(data.getAllMovies);
-      }).catch((error) => {
-        console.error("Error fetching movies:", error);
       });
     }
   }, [client]);
