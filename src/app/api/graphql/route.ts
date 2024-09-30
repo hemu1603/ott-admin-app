@@ -64,8 +64,8 @@ const rootValue = {
   getSearchedMovies: async (searchQuery: any) => {
     const db = await connectToDatabase();
     const query: any = {};
-    if (searchQuery) {
-      const regex = new RegExp(searchQuery, 'i');
+    if (searchQuery && searchQuery?.searchQuery) {
+      const regex = new RegExp(searchQuery?.searchQuery, 'i');
       query.$or = [
         { title: { $regex: regex } },
         { description: { $regex: regex } },
